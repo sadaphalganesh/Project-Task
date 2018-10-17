@@ -109,7 +109,7 @@ public class StudentController {
 		else {
 			studentService.edit(student);
 		}
-		ModelAndView modelAndView =new ModelAndView("login");
+		ModelAndView modelAndView =new ModelAndView("logout");
 		modelAndView.addObject("msg", "Success");
 		return modelAndView;
 	}
@@ -120,30 +120,52 @@ public class StudentController {
 	}
 	
 	@Autowired
-	public Admin admin;
+	public Admin adminObj;
+	
+	@RequestMapping(method=RequestMethod.POST,value="/adminPortal")
+	public 	ModelAndView adminPortal(Model model,HttpServletRequest request) {
+		String userName=request.getParameter("userName");
+		String  password=request.getParameter("password");
+		String adminUserName=adminObj.getUserName();
+		String adminPassword=adminObj.getPassword();
+		
+		boolean x=adminUserName.equals(userName);
+		int y=adminPassword.compareTo(password);
+	
+		System.out.println(x);
+		System.out.println(y);
+		System.out.println(adminPassword);
+		System.out.println(password);
+		
+		
+		if(x && (y-3)==0){
+			HttpSession session=request.getSession();
+			System.out.println(session.getId());
+			session.setAttribute("userName", userName);
+			ModelAndView modelAndView=new ModelAndView("adminPortal");
+			return modelAndView;
+			
+		}
+		else {
+			ModelAndView modelAndView=new ModelAndView("adminLogin");
+			modelAndView.addObject("msg","wrong admin login credentials");
+			return modelAndView;
+	}}
 	
 	
-	@RequestMapping(method=RequestMethod.POST,value="/getAllStudents")
+	@RequestMapping(value="/getAllStudents")
 	public ModelAndView getAllStudentData(HttpServletRequest request){
-				
-			String userName=request.getParameter("userName");
-			String  password=request.getParameter("password");
-			String adminUserName=admin.getUserName();
-			String adminPassword=admin.getPassword();
 			
-			HttpSession session=request.getSession(false);	
-			
-			if (!(adminUserName.equals(userName))|| !(adminPassword.equals(password))) {
-				System.out.println(session.getId());
-				ModelAndView modelAndView=new ModelAndView("StudentList");
-				modelAndView.addObject("studentList", studentService.getAllStudent());
-				return modelAndView;
-			}
-			else{
-				ModelAndView modelAndView=new ModelAndView("adminLogin");
-				modelAndView.addObject("msg","wrong admin login credentials");
-				return modelAndView;
-			}
+		HttpSession session=request.getSession(false);
+		if(session==null) {
+			ModelAndView modelAndView=new ModelAndView("login");
+			modelAndView.addObject("msg","Please login to continue");
+			return modelAndView;			
+		}
+		System.out.println(session.getId());
+			ModelAndView modelAndView=new ModelAndView("StudentList");
+			modelAndView.addObject("studentList", studentService.getAllStudent());
+			return modelAndView;
 	}
 	
 	@RequestMapping(method=RequestMethod.POST,value="/getByFirstName")

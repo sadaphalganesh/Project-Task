@@ -12,11 +12,6 @@ public class Admin {
 		
 	}
 
-	public Admin(String userName,String password) {
-		this.userName=userName;
-		this.password=password;	
-	}
-	
 	@Value("${admin.userName}")
 	private String userName;
 	
@@ -58,7 +53,6 @@ public class Admin {
 	public String getPassword() {
 		return password;
 	}
-
 	
 	public void setPassword(String password) {
 		this.password = password;

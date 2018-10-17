@@ -7,9 +7,9 @@
 <title>login page</title>
 </head>
 <body>
+<h3>${msg}</h3>
 
-<form action="getAllStudents" method="post">
-
+<form action="adminPortal" method="post">
 UserName:<input type="text" name="userName"><br><br>
 Password:<input type="text" name="password"><br>
 <input type="submit" value="Submit">

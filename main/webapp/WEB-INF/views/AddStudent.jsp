@@ -44,7 +44,7 @@
 		
 		<tr>
 			<td>dateOfBirth</td>
-			<td><form:input path="dateOfBirth"/><td>	
+			<td><form:input path="dateOfBirth" /><td>	
 		</tr>
 		
 		<tr>
