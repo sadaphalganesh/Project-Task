@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.swing.JOptionPane;
 import javax.validation.Valid;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jbk.entity.Admin;
 import com.jbk.entity.Student;
 import com.jbk.service.EmailService;
 import com.jbk.service.StudentService;
@@ -49,7 +51,6 @@ public class StudentController {
 		model.addAttribute("student",student);
 		return "AddStudent";		
 	}
-	
 	
 	@RequestMapping("/login")
 	public 	ModelAndView validation(HttpServletRequest request) {
@@ -118,21 +119,54 @@ public class StudentController {
 		return "adminLogin";		
 	}
 	
+	@Autowired
+	public Admin admin;
 	
-	@RequestMapping("/getAllStudents")
-	public ModelAndView getAllStudentData(@RequestParam("userName") String userName,@RequestParam String password,HttpServletRequest request) {
-		
-		if(userName.equals("admin") && password.equals("admin")){
-		ModelAndView modelAndView=new ModelAndView("StudentList");
-		modelAndView.addObject("studentList", studentService.getAllStudent());
-		return modelAndView;
-		}
-		else {
-			ModelAndView modelAndView=new ModelAndView("login");
-			modelAndView.addObject("msg","wrong admin login credentials");
-			return modelAndView;
-		}
+	
+	@RequestMapping(method=RequestMethod.POST,value="/getAllStudents")
+	public ModelAndView getAllStudentData(HttpServletRequest request){
+				
+			String userName=request.getParameter("userName");
+			String  password=request.getParameter("password");
+			String adminUserName=admin.getUserName();
+			String adminPassword=admin.getPassword();
+			
+			HttpSession session=request.getSession(false);	
+			
+			if (!(adminUserName.equals(userName))|| !(adminPassword.equals(password))) {
+				System.out.println(session.getId());
+				ModelAndView modelAndView=new ModelAndView("StudentList");
+				modelAndView.addObject("studentList", studentService.getAllStudent());
+				return modelAndView;
+			}
+			else{
+				ModelAndView modelAndView=new ModelAndView("adminLogin");
+				modelAndView.addObject("msg","wrong admin login credentials");
+				return modelAndView;
+			}
 	}
+	
+	@RequestMapping(method=RequestMethod.POST,value="/getByFirstName")
+	public ModelAndView getByFirstName(HttpServletRequest request) {
+			
+			HttpSession session=request.getSession(false);
+			if(session==null) {
+				ModelAndView modelAndView=new ModelAndView("login");
+				modelAndView.addObject("msg","Please login to continue");
+				return modelAndView;			
+			}
+			String firstName=request.getParameter("firstName");
+			
+			if(firstName=="") {
+				ModelAndView modelAndView=new ModelAndView("StudentList");
+				modelAndView.addObject("studentList", studentService.getAllStudent());
+				return modelAndView;
+			}
+			ModelAndView modelAndView=new ModelAndView("StudentList");
+			modelAndView.addObject("studentList", studentService.getByFirstName(firstName));	
+			return modelAndView;
+	}
+	
 	
 	@RequestMapping(method=RequestMethod.GET, value="/edit")
 	public ModelAndView editData(HttpServletRequest request) {
@@ -158,22 +192,34 @@ public class StudentController {
 	@Autowired
 	private EmailService studentEmailService;
 	
-	@RequestMapping(method=RequestMethod.GET, value="/email")
+	
+	@RequestMapping(method=RequestMethod.POST, value="/email")
+	public ModelAndView sendEmailFromPrompt(HttpServletRequest request) {
+		String sendTo=request.getParameter("email");
+		System.out.println(sendTo); 
+		
+		HttpSession session=request.getSession();
+		session.setAttribute("sendTo", sendTo);
+	    ModelAndView modelAndView=new ModelAndView("message");
+		return modelAndView;
+		
+	}	
+	
+	
+	@RequestMapping(method=RequestMethod.POST, value="/sendEmail")
 	public ModelAndView sendEmail(HttpServletRequest request) {
-		int id=Integer.parseInt(request.getParameter("id"));
-		//
-		System.out.println(id); 
-		Student student=studentService.getStudent(id);
-		String email=student.getEmail();
+		String email=request.getParameter("sendTo");
+		String subject=request.getParameter("subject");	
+		String message=request.getParameter("message");
 		System.out.println(email);
-	    studentEmailService.sendEmail(email);
+		System.out.println(message);
+		
+		studentEmailService.sendEmail(email,subject,message);
+		
 	    ModelAndView modelAndView=new ModelAndView("hello");
 	    modelAndView.addObject("msg", "The msg has been delivered to "+email);
 		return modelAndView;
-	}
-	
-	
-	
+		
+	}	
 }
 	
-

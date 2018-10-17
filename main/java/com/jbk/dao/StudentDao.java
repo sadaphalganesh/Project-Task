@@ -20,5 +20,7 @@ public interface StudentDao {
 	public List getAllStudent();
 	
 	public Student getStudent(String userName);
+
+	public List<Student> getByFirstName(String firstName);
 	
 }

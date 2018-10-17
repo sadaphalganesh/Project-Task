@@ -14,13 +14,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.jbk.entity.Admin;
+
 @Service
 public class EmailService implements MessengerService {
 	
 	@Autowired
 	Properties props;
 	
+	@Autowired
+	Admin admin;
 	
+	public Admin getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(Admin admin) {
+		this.admin = admin;
+	}
+
 	public Properties getProps() {
 		return props;
 	}
@@ -30,23 +42,19 @@ public class EmailService implements MessengerService {
 	}
 
 
-	public void sendEmail(String email) {
+	public void sendEmail(String email,String subject,String message1) {
 		System.out.println("im in email service");
-		 String from="sadaphalganesh@gmail.com";
-		 String password="9011718173";
+		String from=admin.getAdminEmail();
+		String password=admin.getEmailPassword();
+		
+		
+		System.out.println(from);
+		System.out.println(password);
 		 String to=email;
 		 System.out.println(to);
-		 String sub="email trials";
-		 String msg="The messages is sent through java apps";
-		
-        
-      /*  = new Properties();  */  
-    /*    props.put("mail.smtp.host", "smtp.gmail.com");    
-        props.put("mail.smtp.socketFactory.port", "465");    
-        props.put("mail.smtp.socketFactory.class",    
-                  "javax.net.ssl.SSLSocketFactory");    
-        props.put("mail.smtp.auth", "true");    
-        props.put("mail.smtp.port", "465");  */  
+		 String sub=subject;
+		 String msg=message1;
+		  
         //get Session   
         Session session = Session.getDefaultInstance(props,    
          new javax.mail.Authenticator() {    

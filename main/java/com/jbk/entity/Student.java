@@ -32,7 +32,7 @@ public class Student {
 	private String firstName;
 	
 	@Column
-	//@Pattern(regexp="[^0~9]*")
+	@Pattern(regexp="[^0-9]*")
 	private String lastName;
 	
 	
@@ -43,7 +43,8 @@ public class Student {
 	private String address;
 	
 	@Column
-	@Size(max=10,min=10,message="invalid phone num")
+	@Pattern(regexp="[789]{1}[0-9]{9}")
+	//@Size(max=10,min=10,message="invalid phone num")
 	private String phoneNumber;
 
 	

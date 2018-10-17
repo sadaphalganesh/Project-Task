@@ -12,12 +12,12 @@
 
 	<!-- tells DispatcherServlet to look for Controller classes using @Controller annotation. -->
 	<mvc:annotation-driven />
+	
 	<!-- tells DispatcherServlet where to look for controller classes -->
 	<context:component-scan base-package="com.jbk" />
 	
-	<context:property-placeholder location="WEB-INF/jdbc.properties" />
+	<context:property-placeholder location="WEB-INF/jdbc.properties" ignore-unresolvable="true" />
 	
-
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass"
@@ -62,7 +62,7 @@
 		
 	<!-- related to email-->
 	
-	<context:property-placeholder location="/WEB-INF/email.properties" />
+	<context:property-placeholder location="WEB-INF/email.properties" />
 	
 		<bean id="emailService" class="com.jbk.service.EmailService">
 			<property name="props" >
@@ -76,4 +76,12 @@
 				</props>
 			</property>
 		</bean>
+		
+		<bean id="admin" class="com.jbk.entity.Admin">
+			<property name="userName" value="${admin.userName}"></property>
+			<property name="password" value="${admin.password}"></property>
+			<property name="adminEmail" value="${admin.emailID}"></property>
+			<property name="emailPassword" value="${admin.emailPassword}"></property>
+		</bean>
+		
 </beans>

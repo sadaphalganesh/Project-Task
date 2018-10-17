@@ -57,6 +57,13 @@ public class StudentDaoImpl implements StudentDao {
 		Student student=(Student)criteria.uniqueResult();
 		return student;
 	}
+
+	@Override
+	public List<Student> getByFirstName(String firstName) {
+		Criteria criteria=sessionfactory.getCurrentSession().createCriteria(Student.class);
+		criteria.add(Restrictions.or(Restrictions.eq("firstName",firstName),Restrictions.eq("lastName", firstName)));
+		return criteria.list();
+	}
 	
 
 }

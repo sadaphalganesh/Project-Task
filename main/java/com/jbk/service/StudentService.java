@@ -17,4 +17,6 @@ public interface StudentService {
 	public List<Student> getAllStudent();
 
 	public Student getValidation(String userName, String password);
+
+	public List<Student> getByFirstName(String string);
 }
