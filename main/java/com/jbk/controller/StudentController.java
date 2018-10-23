@@ -109,8 +109,8 @@ public class StudentController {
 		else {
 			studentService.edit(student);
 		}
-		ModelAndView modelAndView =new ModelAndView("logout");
-		modelAndView.addObject("msg", "Success");
+		ModelAndView modelAndView =new ModelAndView("login");
+		modelAndView.addObject("msg", "Registration Successful,Please login");
 		return modelAndView;
 	}
 	
@@ -129,16 +129,27 @@ public class StudentController {
 		String adminUserName=adminObj.getUserName();
 		String adminPassword=adminObj.getPassword();
 		
+		System.out.println(userName);
+		System.out.println(password);
+		System.out.println(adminUserName);
+		System.out.println(adminPassword);
+		
 		boolean x=adminUserName.equals(userName);
+		boolean z=adminPassword.equals(password);
+		
+		int p=adminUserName.compareTo(userName);
 		int y=adminPassword.compareTo(password);
+		
 	
 		System.out.println(x);
+		System.out.println(z);
+		System.out.println(p);
 		System.out.println(y);
 		System.out.println(adminPassword);
 		System.out.println(password);
 		
 		
-		if(x && (y-3)==0){
+		if(x && z){
 			HttpSession session=request.getSession();
 			System.out.println(session.getId());
 			session.setAttribute("userName", userName);

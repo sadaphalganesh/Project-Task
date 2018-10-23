@@ -10,18 +10,26 @@
 <title>Insert title here</title>
 </head>
 <body>
+<%@include file="header.jsp" %>
 
 <%
 String sendTo=(String)session.getAttribute("sendTo");
  %>
 <form  action="sendEmail" method="post">
-	SendTo:<input type="text" value="<%=sendTo%>" name="sendTo"><br>
-	
-	Subject:<input type="text" name="subject"><br>
-	
-	Message:<textarea name="message"><br>
-		
-	<input type="submit"  value="send">
+<table>
+<tr>
+<td>SendTo:<input type="text"  value="<%=sendTo%>" name="sendTo"><br></td>
+</tr>
+<tr>	
+<td>Subject:<input type="text" name="subject"></td>
+</tr>
+<tr>
+	<td>Message:<textarea name="message"  rows=4 cloumn=50  "></textarea></td>
+</tr>
+<tr>
+	<td><input type="submit"  value="send"  ></td>
+</tr>
+</table>	
 </form>
 
 </body>
