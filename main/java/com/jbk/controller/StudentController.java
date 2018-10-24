@@ -3,6 +3,7 @@ package com.jbk.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,7 @@ public class StudentController {
 		
 		String userName= request.getParameter("userName");
 		String password= request.getParameter("password");
+		password=StudentService.getEncryption(password);
 	
 		Student student=studentService.getValidation(userName,password);
 		
@@ -212,6 +214,24 @@ public class StudentController {
 	    modelAndView.addObject("student",student);
 		return modelAndView;
 	}
+	
+	
+	@RequestMapping(method=RequestMethod.POST,value="/deleteSelected")
+	public ModelAndView deleteSelected(HttpServletRequest request) {
+		
+		String[] str=request.getParameterValues("select");
+		
+		for(int i=0;i<=str.length-1;i++) {
+			System.out.println(str[i]);
+			int id=Integer.parseInt(str[i]);
+		    studentService.delete(id);
+		}
+		
+		ModelAndView modelAndView=new ModelAndView("StudentList");
+		modelAndView.addObject("studentList", studentService.getAllStudent());
+		return modelAndView;
+	}
+	
 	
 	@RequestMapping(method=RequestMethod.GET, value="/delete")
 	public ModelAndView deleteData(HttpServletRequest request) {

@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.jbk.service.StudentService;
+
 @Entity
 @Table(name="student")
 public class Student {
@@ -73,6 +75,7 @@ public class Student {
 		return password;
 	}
 	public void setPassword(String password) {
+		password=StudentService.getEncryption(password);
 		this.password = password;
 	}
 	public Integer getId() {
