@@ -46,7 +46,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Transactional
-	public Student getValidation(String userName, String password) {
+	public Student getValidation(String userName) {
 		return studentDao.getStudent(userName);
 	}
 

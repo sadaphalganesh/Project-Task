@@ -44,18 +44,21 @@ public class StudentDaoImpl implements StudentDao {
 
 	@Override
 	public List<Student> getAllStudent() {
-		return sessionfactory.getCurrentSession().createQuery("from Student").list();
-		
+		return sessionfactory.getCurrentSession().createQuery("from Student").list();	
 	}
 	
 	@Override
 	public Student getStudent(String userName) {
+		
+		try {
 		//Query query= sessionfactory.getCurrentSession().createSQLQuery("select * from student where userName="+userName);
 		Criteria criteria=sessionfactory.getCurrentSession().createCriteria(Student.class);
 		criteria.add(Restrictions.eq("userName",userName));
-		
 		Student student=(Student)criteria.uniqueResult();
 		return student;
+		}catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Override

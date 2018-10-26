@@ -6,8 +6,8 @@
 <meta charset="ISO-8859-1">
 <title>login page</title>
 </head>
-<body>
 
+<body>
 <h2>${msg}</h2>
 <form action="login" method="post">
 

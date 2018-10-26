@@ -11,11 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.swing.JOptionPane;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -60,7 +62,15 @@ public class StudentController {
 		String password= request.getParameter("password");
 		password=StudentService.getEncryption(password);
 	
-		Student student=studentService.getValidation(userName,password);
+		Student student=studentService.getValidation(userName);
+		
+		if(student==null) {
+			ModelAndView modelAndView=new ModelAndView("login");
+			modelAndView.addObject("msg","pls enter the correct userNmae and password");
+			return modelAndView ;
+		}
+		
+		
 		
 		String umane=student.getUserName();
 		String pass=student.getPassword();
@@ -98,23 +108,42 @@ public class StudentController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/saveForm")
-	public ModelAndView addToDB(@Valid @ModelAttribute ("student") Student student,BindingResult result) {
-	
+	public ModelAndView addToDB(@Valid @ModelAttribute ("student") Student student,BindingResult result,HttpServletRequest request) {
+		
+		String userName=request.getParameter("userName");
+		Student studentx=studentService.getValidation(userName);
+		if(studentx!=null) {
+			ModelAndView modelAndView=new ModelAndView("AddStudent");
+			modelAndView.addObject("message","Username already Exists...pls reEnter the userName");
+			return modelAndView;
+		}
+		
 		if(result.hasErrors()) {
 			ModelAndView modelAndView =new ModelAndView("AddStudent");
 			return modelAndView;
 		}
 		
-		if(student.getId()==null) {
+		//if(student.getId()==null) {
+		if(student.getId()==null){
 		studentService.add(student);
-		}
-		else {
-			studentService.edit(student);
-		}
 		ModelAndView modelAndView =new ModelAndView("login");
 		modelAndView.addObject("msg", "Registration Successful,Please login");
 		return modelAndView;
-	}
+		}
+		
+		HttpSession session=request.getSession(false);
+			
+		if(session!=null) {
+			studentService.edit(student);
+			ModelAndView modelAndView =new ModelAndView("adminPortal");
+			modelAndView.addObject("msg","student edited successfully");
+			return modelAndView;	
+		}else {
+			ModelAndView modelAndView =new ModelAndView("login");
+		modelAndView.addObject("msg", "Please login");
+		return modelAndView;	
+		
+	}}
 	
 	@RequestMapping("/adminLogin")
 	public 	String adminLogin(Model model) {
@@ -203,9 +232,17 @@ public class StudentController {
 	}
 	
 	
-	@RequestMapping(method=RequestMethod.GET, value="/edit")
+	@RequestMapping(method=RequestMethod.POST, value="/edit")
 	public ModelAndView editData(HttpServletRequest request) {
-		int id=Integer.parseInt(request.getParameter("id"));
+		
+		String[] str=request.getParameterValues("select");
+		if(str.length>1) {
+			 ModelAndView modelAndView=new ModelAndView("StudentList");
+			    modelAndView.addObject("msg","please select only one student");
+				return modelAndView;
+		}
+		int id=Integer.parseInt(request.getParameter("select"));
+		//id=Integer.parseInt(request.getParameter("id"));
 		System.out.println(id);
 	    Student student=studentService.getStudent(id);
 	    System.out.println(student);
@@ -216,9 +253,9 @@ public class StudentController {
 	}
 	
 	
-	@RequestMapping(method=RequestMethod.POST,value="/deleteSelected")
+	@RequestMapping(value="/deleteSelected")
 	public ModelAndView deleteSelected(HttpServletRequest request) {
-		
+		System.out.print("IM IN");
 		String[] str=request.getParameterValues("select");
 		
 		for(int i=0;i<=str.length-1;i++) {
@@ -226,7 +263,6 @@ public class StudentController {
 			int id=Integer.parseInt(str[i]);
 		    studentService.delete(id);
 		}
-		
 		ModelAndView modelAndView=new ModelAndView("StudentList");
 		modelAndView.addObject("studentList", studentService.getAllStudent());
 		return modelAndView;
@@ -245,6 +281,52 @@ public class StudentController {
 	@Autowired
 	private EmailService studentEmailService;
 	
+	@RequestMapping(method=RequestMethod.POST, value="/sendToMany")
+	public ModelAndView sendMultipleEmailFromPrompt(HttpServletRequest request) {
+		String[] str=request.getParameterValues("select");
+		
+		String[] emails=new String[str.length];
+		for(int i=0;i<=str.length-1;i++) {
+			System.out.println(str[i]);
+			int id=Integer.parseInt(str[i]);
+		    Student student=studentService.getStudent(id);
+		    String email=student.getEmail();
+		    emails[i]=email;
+		}
+		HttpSession session=request.getSession();
+		session.setAttribute("emails",emails);
+		
+		 ModelAndView modelAndView=new ModelAndView("message");
+		 modelAndView.addObject("emails",emails);
+			return modelAndView;
+		
+	}
+	
+	
+	@RequestMapping(method=RequestMethod.POST, value="/sendEmails")
+	public ModelAndView sendEmails(HttpServletRequest request) {
+		HttpSession session=request.getSession();
+		
+		String[] emails=(String[])session.getAttribute("emails");
+		
+		for(int i=0;i<=emails.length-1;i++) {
+			System.out.println(emails[i]);
+			
+		}
+		
+		
+		String subject=request.getParameter("subject");	
+		String message=request.getParameter("message");
+		
+		System.out.println(message);
+		
+		studentEmailService.sendEmail(emails,subject,message);
+		
+	    ModelAndView modelAndView=new ModelAndView("StudentList");
+	    modelAndView.addObject("msg", "The msg has been delivered to "+emails.toString());
+		return modelAndView;
+		
+	}	
 	
 	@RequestMapping(method=RequestMethod.POST, value="/email")
 	public ModelAndView sendEmailFromPrompt(HttpServletRequest request) {
@@ -269,10 +351,14 @@ public class StudentController {
 		
 		studentEmailService.sendEmail(email,subject,message);
 		
-	    ModelAndView modelAndView=new ModelAndView("hello");
-	    modelAndView.addObject("msg", "The msg has been delivered to "+email);
+	    ModelAndView modelAndView=new ModelAndView("StudentList");
+	    modelAndView.addObject("msg", "The msg has been delivered to "+email.toString());
 		return modelAndView;
 		
-	}	
+	}
+	
+	
+	
+	
 }
 	

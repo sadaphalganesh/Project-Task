@@ -11,12 +11,38 @@
 Search Student<input type="text" name="firstName"><input type="submit" value="GO">
 </form>
 
+
+<h2>${msg}</h2>
+<script>
+	function OnButton(obj){
+		if(obj.name=="DeleteButton"){
+		document.Form1.action="deleteSelected";
+		alert("Do you want to delete?")
+		//return true;
+		document.Form1.submit()
+	}
+		if(obj.name=="EditButton"){
+			document.Form1.action="edit";
+			alert("do you want to edit?")
+			//return true;
+			document.Form1.submit()
+		}
+		if(obj.name=="EmailButton"){
+			document.Form1.action="sendToMany";
+			alert("do you want to SEND EMAIL?")
+			//return true;
+			document.Form1.submit()
+		}
+	}
+</script>
+
 <br><br>
 
 <h1>Student List</h1>
 
 
-<form action="deleteSelected" method="post" name="input">
+<form name="Form1" method="post">
+
 
 <table border="1">
 <th>Select</th>
@@ -43,30 +69,24 @@ Search Student<input type="text" name="firstName"><input type="submit" value="GO
 			<td><c:out value="${student.phoneNumber}"/></td>	
 			<td><c:out value="${student.gender}"/></td>	
 			<td><c:out value="${student.dateOfBirth}"/></td>	
-			<td><a href="edit?id=${student.id}">EDIT</a></td>
-			<!-- <td><a href="delete?id=${student.id}">DELETE</a></td> -->
-			
 			<!--  <td><a href="email?id=${student.id}">EMAIL</a></td>-->
-			<form:form action="email" method="post">
+			<!--<form:form action="email" method="post">
 			<input type="hidden" value="${student.email}" name="email">	
 			<td><input type="submit" value="EMAIL"></td>
-			</form:form>	
+			</form:form>-->	
 	</tr>
 </c:forEach>
 
 
 </table>
-<input type="submit" value="Delete">
+<input type="button" value="Delete" name="DeleteButton" onclick="OnButton(this);">
+<input type="button" value="Edit" name="EditButton" onclick="OnButton(this);">
+<input type="button" value="Email" name="EmailButton" onclick="OnButton(this);">
+
 </form>	
 
 </body>
-<!--  
-<script>
-	function promptBox(){
-		var jsmessage=prompt("Message","");
-	<!--	window.location.replace("message.jsp?message="+jsmessage)
-	}-->
-	</script>
+
 	<%
 	String msg="<script>document.writeln(jsmessage)</script>";
 	out.println(msg);

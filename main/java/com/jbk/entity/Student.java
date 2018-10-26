@@ -1,5 +1,7 @@
 package com.jbk.entity;
 
+
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -68,9 +71,13 @@ public class Student {
 	public String getUserName() {
 		return userName;
 	}
+	
+	
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	
+	
 	public String getPassword() {
 		return password;
 	}
@@ -127,9 +134,4 @@ public class Student {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	
-	
-	
-	
-	
 }

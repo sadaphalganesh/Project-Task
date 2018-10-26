@@ -14,6 +14,7 @@ out.println(session.getCreationTime());
  %>
 <h4 align="right"><a href="logout"><%=uname+">>" %>LogOut</a></h4>
 <form action="getAllStudents">
+
 GET THE LIST OF ALL STUDENTS<input type="submit" value="GO">
 </form>
 <form action="getByFirstName" method="post">

@@ -10,7 +10,11 @@
 </head>
 <body>
 
-<h1>Provide Student info</h1>
+
+<h1>Registration form</h1>
+
+<h3>${message}</h3>
+
 <form:errors path="student.*"></form:errors>
 
 <form:form  action="saveForm" method="post" modelAttribute="student">

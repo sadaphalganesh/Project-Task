@@ -11,14 +11,16 @@
 </head>
 <body>
 <%@include file="header.jsp" %>
-
+<!--  
 <%
 String sendTo=(String)session.getAttribute("sendTo");
  %>
-<form  action="sendEmail" method="post">
+ -->
+ 
+<form  action="sendEmails" method="post">
 <table>
 <tr>
-<td>SendTo:<input type="text"  value="<%=sendTo%>" name="sendTo"><br></td>
+<!--  <td>SendTo:<input type="text"  value="<%=sendTo%>" name="sendTo"><br></td>-->
 </tr>
 <tr>	
 <td>Subject:<input type="text" name="subject"></td>

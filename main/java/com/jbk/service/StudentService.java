@@ -19,10 +19,12 @@ public interface StudentService {
 	
 	public List<Student> getAllStudent();
 
-	public Student getValidation(String userName, String password);
+	public Student getValidation(String userName);
 
 	public List<Student> getByFirstName(String string);
 
+
+	
 	public static String getEncryption(String password) {
 	
 	    MessageDigest md;
